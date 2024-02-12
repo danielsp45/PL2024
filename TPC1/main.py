@@ -76,7 +76,7 @@ if __name__ == "__main__":
     linhas = processa_csv(CSV_FILE_PATH)
     processa_atletas(linhas, lista_atletas, escaloes_atletas, atletas_aptos)
 
-    print("Número de atletas aptos: ", atletas_aptos[0])
+    print("Percentagem de atletas aptos: ", round((atletas_aptos[0] / len(linhas)) * 100, 2), "%")
     print("Distribuição de atletas por escalao: ", escaloes_atletas)
     print("Lista de atletas ordenados por modalidade")
     for atleta in lista_atletas:
