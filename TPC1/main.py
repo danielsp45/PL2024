@@ -33,6 +33,7 @@ def processa_atleta(campos, lista_atletas, escaloes_atletas, atletas_aptos):
     contabiliza_atleta_apto(atleta, atletas_aptos)
 
 def parse_linha(linha):
+    """Dá parse de uma só linha para um dicionário"""
     return {
             "id": linha[ID],
             "idade": linha[IDADE],
@@ -42,10 +43,12 @@ def parse_linha(linha):
         }
 
 def contabiliza_atleta_apto(atleta, atletas_aptos):
+    """Caso o atleta esteja apto, contabiliza-o para a percentagem de atletas aptos"""
     if atleta["resultado"]:
         atletas_aptos[0] += 1
 
 def guarda_escalao_atleta(atleta, escaloes_atletas):
+    """Contabiliza escalão do atleta no dicionário de escaloes_atletas"""
     idade = atleta["idade"]
 
     if int(idade[1]) >= 5:
@@ -59,19 +62,24 @@ def guarda_escalao_atleta(atleta, escaloes_atletas):
         escaloes_atletas[escalao] = 1
 
 def guarda_atleta_por_modalidade(atleta, lista_atletas):
+    """Guarda o objeto atleta na lista ordenada alfabeticamente por modalidade"""
     modalidade = atleta["modalidade"]
 
-    for i, a in enumerate(lista_atletas):
-        if a["modalidade"].lower() > modalidade.lower():
+    inserted = False
+    i = 0
+    while i < len(lista_atletas) and not inserted:
+        if lista_atletas[i]["modalidade"].lower() > modalidade.lower():
             lista_atletas.insert(i, atleta)
-            return
+            inserted = True
+        i += 1
 
-    lista_atletas.append(atleta)
+    if not inserted:
+        lista_atletas.append(atleta)
 
 if __name__ == "__main__":
     lista_atletas = []
     escaloes_atletas = {}
-    atletas_aptos = [0] # stored inside a list so it can be muttable
+    atletas_aptos = [0] # guardado dentro de uma lista para permitir mutabilidade
 
     linhas = processa_csv(CSV_FILE_PATH)
     processa_atletas(linhas, lista_atletas, escaloes_atletas, atletas_aptos)
