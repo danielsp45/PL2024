@@ -1,3 +1,5 @@
+from tabulate import tabulate
+
 CSV_FILE_PATH = "./Conte.csv"
 
 # Posição dos campos de interesse a partir do 0
@@ -84,8 +86,12 @@ if __name__ == "__main__":
     linhas = processa_csv(CSV_FILE_PATH)
     processa_atletas(linhas, lista_atletas, escaloes_atletas, atletas_aptos)
 
-    print("Percentagem de atletas aptos: ", round((atletas_aptos[0] / len(linhas)) * 100, 2), "%")
-    print("Distribuição de atletas por escalao: ", escaloes_atletas)
-    print("Lista de atletas ordenados por modalidade")
-    for atleta in lista_atletas:
-        print(atleta)
+    # Tabela de atletas
+    print("Lista de atletas ordenados por modalidade:")
+    print(tabulate(lista_atletas, headers="keys", tablefmt="grid"))
+    # Percentagem de atletas aptos
+    print("Percentagem de atletas aptos:", round((atletas_aptos[0] / len(linhas)) * 100, 2), "%")
+    # Distribuição de atletas
+    print("Distribuição de atletas por escalão:")
+    for escalao, quantidade in escaloes_atletas.items():
+        print(f"{escalao.capitalize()}: {quantidade}")
