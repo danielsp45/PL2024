@@ -20,18 +20,18 @@ def processa_csv(file_path):
         print(f"Ficheiro {file_path} não encontrado")
         exit(1)
 
-def processa_atletas(linhas, lista_atletas, escaloes_atletas, atletas_aptos):
+def processa_atletas(linhas, lista_modalidades, escaloes_atletas, atletas_aptos):
     for linha in linhas:
         campos = linha.split(',')
-        processa_atleta(campos, lista_atletas, escaloes_atletas, atletas_aptos)
+        processa_atleta(campos, lista_modalidades, escaloes_atletas, atletas_aptos)
 
-def processa_atleta(campos, lista_atletas, escaloes_atletas, atletas_aptos):
+def processa_atleta(campos, lista_modalidades, escaloes_atletas, atletas_aptos):
     """Processa um atleta individualmente, recolhendo os dados relevantes e guardando-os"""
 
     atleta = parse_linha(campos)
 
     guarda_escalao_atleta(atleta, escaloes_atletas)
-    guarda_atleta_por_modalidade(atleta, lista_atletas)
+    guarda_atleta_por_modalidade(atleta, lista_modalidades)
     contabiliza_atleta_apto(atleta, atletas_aptos)
 
 def parse_linha(linha):
@@ -63,32 +63,35 @@ def guarda_escalao_atleta(atleta, escaloes_atletas):
     else:
         escaloes_atletas[escalao] = 1
 
-def guarda_atleta_por_modalidade(atleta, lista_atletas):
-    """Guarda o objeto atleta na lista ordenada alfabeticamente por modalidade"""
+def guarda_atleta_por_modalidade(atleta, lista_modalidades):
+    """Guarda a modalidade do atleta na lista ordenada alfabeticamente caso ainda não exista"""
     modalidade = atleta["modalidade"]
 
-    inserted = False
+    end_loop = False
     i = 0
-    while i < len(lista_atletas) and not inserted:
-        if lista_atletas[i]["modalidade"].lower() > modalidade.lower():
-            lista_atletas.insert(i, atleta)
-            inserted = True
+    while i < len(lista_modalidades) and not end_loop:
+        if lista_modalidades[i].lower() == modalidade.lower():
+            end_loop = True
+        elif lista_modalidades[i].lower() > modalidade.lower():
+            lista_modalidades.insert(i, modalidade)
+            end_loop = True
         i += 1
 
-    if not inserted:
-        lista_atletas.append(atleta)
+    if not end_loop:
+        lista_modalidades.append(modalidade)
 
 if __name__ == "__main__":
-    lista_atletas = []
+    lista_modalidades = []
     escaloes_atletas = {}
     atletas_aptos = [0] # guardado dentro de uma lista para permitir mutabilidade
 
     linhas = processa_csv(CSV_FILE_PATH)
-    processa_atletas(linhas, lista_atletas, escaloes_atletas, atletas_aptos)
+    processa_atletas(linhas, lista_modalidades, escaloes_atletas, atletas_aptos)
 
     # Tabela de atletas
-    print("Lista de atletas ordenados por modalidade:")
-    print(tabulate(lista_atletas, headers="keys", tablefmt="grid"))
+    print("Lista de modalidades ordenadas alfabeticamente:")
+    for modalidade in lista_modalidades:
+        print(modalidade)
     # Percentagem de atletas aptos
     print("Percentagem de atletas aptos:", round((atletas_aptos[0] / len(linhas)) * 100, 2), "%")
     # Distribuição de atletas
